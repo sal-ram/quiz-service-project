@@ -1,52 +1,67 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Button from '@mui/material/Button';
-import { collection, getDocs, getFirestore } from "firebase/firestore";
-import { db } from '../firebase';
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { Context } from '..';
+import { useCollection } from "react-firebase-hooks/firestore";
+import QuestionCard from './QuestionCard.component';
+import Loader from '../Loader.component';
 
 
 export default function CreateQuiz() {
-
-    // const addQuestion = async (e) => {
-    //     e.preventDefault();
-
-    //     try {
-    //         const docRef = await addDoc(collection(db, "todos"), {
-    //             todo: todo,
-    //         });
-    //         console.log("Document written with ID: ", docRef.id);
-    //     } catch (e) {
-    //         console.error("Error adding document: ", e);
-    //     }
-    // }
-
     const [questions, setQuestions] = useState([]);
-    const db = getFirestore();
+    const { firestore } = useContext(Context);
 
-    const fetchPost = async () => {
-
-        await getDocs(collection(db, "questions"))
-            .then((querySnapshot) => {
-                const newData = querySnapshot.docs
-                    .map((doc) => ({ ...doc.data(), id: doc.id }));
-                setQuestions(newData);
-                console.log(questions, newData);
-            })
-
+    const fetchQuestions = async () => {
+        const querySnapshot = await getDocs(collection(firestore, "questions"));
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            
+        });
+        setQuestions(querySnapshot);
     }
+
+
+    const addQuestion = async () => {
+        const citiesRef = collection(firestore, "questions");
+        await setDoc(doc(citiesRef, "SF"), {
+            name: "San Francisco", state: "CA", country: "USA",
+            capital: false, population: 860000,
+            regions: ["west_coast", "norcal"]
+        });
+    }
+
+    const [ques, loading, error] = useCollection(
+        collection(firestore, 'cities')
+    );
 
     useEffect(() => {
         console.log("fetch");
-        fetchPost();
+        fetchQuestions();
+        console.log(ques);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    if (loading) {
+        return (
+            <Loader/>
+        )
+    }
     return (
         <div>
-            create
             <br />
-            <Button variant="contained">добавить вопрос</Button>
+            <Button variant="contained" onClick={addQuestion}>добавить вопрос</Button>
             <br />
-            questions
+            {/* {ques.map(question =>
+                <>
+                    <Grid container>
+                        <div>{question.type}</div>
+                    </Grid>
+                    <div>{question.text}</div>
+                </>
+
+            )} */}
+            <QuestionCard/>
         </div>
     )
 }
