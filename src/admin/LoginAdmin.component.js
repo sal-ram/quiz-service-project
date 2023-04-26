@@ -1,39 +1,31 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Navigate } from "react-router-dom"
-
-
-function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import { Context } from '..';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import Loader from '../Loader.component';
 
 const theme = createTheme();
 
 export default function LoginAdmin() {
-    const [user, setUser] = React.useState(false);
-    // const auth = getAuth();
+    const { auth } = useContext(Context);
+    const [user, loading, error] = useAuthState(auth)
+
+    if (loading) {
+        return (
+            <Loader />
+        )
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -41,26 +33,18 @@ export default function LoginAdmin() {
             email: data.get('email'),
             password: data.get('password'),
         });
-        // signInWithEmailAndPassword(auth, data.get('email'), data.get('password'))
-        //     .then((userCredential) => {
-        //         // Signed in
-        //         const user = userCredential.user;
-        //         //navigate("/home")
-        //         console.log(user);
-        //         setUser(true);
-        //     })
-        //     .catch((error) => {
-        //         const errorCode = error.code;
-        //         const errorMessage = error.message;
-        //         console.log(errorCode, errorMessage)
-        //     });
+        signInWithEmailAndPassword(auth, data.get('email'), data.get('password'))
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                //navigate("/home")
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage)
+            });
     };
-
-    useEffect(() => {
-        console.log("logout");
-        // setUser(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
     if (user) {
         return (
@@ -83,7 +67,7 @@ export default function LoginAdmin() {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Sign in
+                            Вход в систему
                         </Typography>
                         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                             <TextField
@@ -91,7 +75,7 @@ export default function LoginAdmin() {
                                 required
                                 fullWidth
                                 id="email"
-                                label="Email Address"
+                                label="Логин"
                                 name="email"
                                 autoComplete="email"
                                 autoFocus
@@ -101,14 +85,10 @@ export default function LoginAdmin() {
                                 required
                                 fullWidth
                                 name="password"
-                                label="Password"
+                                label="Пароль"
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                label="Remember me"
                             />
                             <Button
                                 type="submit"
@@ -116,23 +96,10 @@ export default function LoginAdmin() {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                             >
-                                Sign In
+                                Войти
                             </Button>
-                            <Grid container>
-                                <Grid item xs>
-                                    <Link href="#" variant="body2">
-                                        Forgot password?
-                                    </Link>
-                                </Grid>
-                                <Grid item>
-                                    <Link href="#" variant="body2">
-                                        {"Don't have an account? Sign Up"}
-                                    </Link>
-                                </Grid>
-                            </Grid>
                         </Box>
                     </Box>
-                    <Copyright sx={{ mt: 8, mb: 4 }} />
                 </Container>
             </ThemeProvider>
         );
