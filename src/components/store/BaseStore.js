@@ -1,8 +1,9 @@
-import { firestore } from "../../firebase";
+import { auth, firestore } from "../../firebase";
 
 class BaseStore {
   constructor(props) {
     this.firestore = firestore;
+    this.auth = auth;
   }
 }
 
