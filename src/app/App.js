@@ -9,6 +9,9 @@ import { Context } from '..';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { BrowserRouter } from 'react-router-dom';
 import Loader from '../Loader.component';
+import TeamLogin from "../components/pages/team/TeamLogin";
+import TeamMainPage from "../components/pages/team/TeamMainPage";
+import TeamContest from "../components/pages/team/TeamContest";
 
 function App() {
 
@@ -29,6 +32,9 @@ function App() {
         <Route path="/admin" element={<AdminHome />} />
         <Route path="/create-quiz" element={<CreateQuiz />} />
         <Route path="*" element={<Navigate to="/start" replace />} />
+        <Route path="/team/login" element={<TeamLogin />} />
+        <Route path="/team/mainPage/:teamId" element={<TeamMainPage />} />
+        <Route path="/team/contest/:teamId" element={<TeamContest />} />
       </Routes>
     </BrowserRouter>
   );

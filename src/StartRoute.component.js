@@ -23,7 +23,7 @@ export default function StartRoute() {
                 <Box component="" sx={{ mt: 1 }}>
                     <Button fullWidth
                         variant="contained"
-                        sx={{ mt: 3, mb: 2 }}>Команда</Button>
+                        sx={{ mt: 3, mb: 2 }} onClick={() => navigate('/team/login')}>Команда</Button>
                     <Button fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }} onClick={routeChange}>Администратор</Button>
