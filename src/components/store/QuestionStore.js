@@ -5,7 +5,7 @@ class QuestionStore extends BaseStore {
   async get(questionId) {
     const questionRef = doc(collection(this.firestore, "questions"), questionId);
     const questionSnapshot = await getDoc(questionRef);
-    return this._convertDocToTeam(questionSnapshot);
+    return this._convertDocToQuestion(questionSnapshot);
   }
 
   async getAll() {
@@ -23,7 +23,9 @@ class QuestionStore extends BaseStore {
       order: questionData.order,
       text: questionData.text,
       type: questionData.type,
-      answers: questionData.answers
+      answers: questionData.answers,
+      correctAnswer: questionData.correctAnswer,
+      points: questionData.points
     };
   }
 }

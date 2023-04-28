@@ -4,15 +4,20 @@ import getTeam from '../../use_cases/GetTeam';
 import updateTeam from '../../use_cases/UpdateTeam';
 import { Button } from '@mui/material';
 import getAllTeams from '../../use_cases/GetAllTeams';
+import Loader from '../../../Loader.component';
 
 const TeamMainPage = () => {
   const [teamName, setTeamName] = useState('');
   const { teamId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [teamList, setTeamList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); 
+  const [error, setError] = useState('');
 
   const getTeamList = async () => {
+    setIsLoading(true); 
     setTeamList(await getAllTeams());
+    setIsLoading(false); 
   };
 
   useEffect(() => {
@@ -24,9 +29,23 @@ const TeamMainPage = () => {
   };
 
   const handleSaveClick = async () => {
-    const team = await updateTeam(teamId, teamName);
-    setTeamName(team.name);
-    setIsEditing(false);
+    if (teamName.trim() === '') {
+      setError('Введите название');
+    } else if (teamName.length < 3) {
+        setError('Слишком короткое. Должно быть не менее 3 символов.');
+    } else if (teamName.length > 32) {
+        setError('Слишком длинное. Должно быть не более 32 символов.');
+    } else {
+      try {
+        const team = await updateTeam(teamId, teamName);
+        setTeamName(team.name);
+        setIsEditing(false);
+        setError('');
+      } catch (error) {
+        console.log(error);
+        setError('Такое имя уже существует. Введите другое, пожалуйста.');
+      }
+    }
   };
 
   const handleInputChange = (event) => {
@@ -44,6 +63,10 @@ const TeamMainPage = () => {
         .catch(error => console.error(error));
     }
   }, [teamId]);
+
+  if (isLoading) {
+    return <Loader />; // Render loader while data is loading
+  }
 
   return (
     <div className='main'>
@@ -64,11 +87,14 @@ const TeamMainPage = () => {
       <h2>Список активных команд:</h2>
       <div>
         {teamList.map((team) => (
-        <h3>
-          {team.name}
-        </h3>
+        <>
+          {team.id != teamId && (
+            <h3>{team.name}</h3>
+          )}
+        </>
         ))}
       </div>
+      {error && <div>{error}</div>}
       <h2>Сессия еще не началась</h2>
     </div>
   );

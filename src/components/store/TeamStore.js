@@ -15,14 +15,13 @@ class TeamStore extends BaseStore {
     if (!existingTeamSnapshot.empty) {
       throw new Error('A team with this name already exists.');
     }
-    const teamRef = await addDoc(teamsRef, {name: teamName});
+    const teamRef = await addDoc(teamsRef, {name: teamName, points: 0});
     const teamSnapshot = await getDoc(teamRef);
     console.log(teamSnapshot);
     return this._convertDocToTeam(teamSnapshot);
   }
 
   async update(teamId, newName) {
-    //Check if the new name already exists for another team
     const teamsRef = collection(this.firestore, 'teams');
     const existingTeamQuery = query(teamsRef, where('name', '==', newName));
     const existingTeamSnapshot = await getDocs(existingTeamQuery);
@@ -30,9 +29,23 @@ class TeamStore extends BaseStore {
       throw new Error(`A team with the name ${newName} already exists.`);
     }
     const teamRef = doc(collection(this.firestore, "teams"), teamId);
-    const teamSnapshot = await getDoc(teamRef);
-    const updatedTeamSnapshot = await updateDoc(teamSnapshot, { name: newName});
-    return this._convertDocToTeam(updatedTeamSnapshot);
+    let teamSnapshot = await getDoc(teamRef);
+    const updatedTeamSnapshot = await updateDoc(teamRef, { name: newName});
+    teamSnapshot = await getDoc(teamRef);
+    return this._convertDocToTeam(teamSnapshot);
+  }
+
+  async addPoints(teamId, points) {
+    const teamRef = doc(collection(this.firestore, "teams"), teamId);
+    let teamSnapshot = await getDoc(teamRef);
+    console.log(teamSnapshot.data().points + points);
+    let newPoints = teamSnapshot.data().points + points;
+    const updatedTeamSnapshot = await updateDoc(teamRef, {
+      points: newPoints
+    });
+    teamSnapshot = await getDoc(teamRef);
+    console.log(teamSnapshot.data());
+    return this._convertDocToTeam(teamSnapshot);
   }
 
   async list(){
@@ -49,7 +62,8 @@ class TeamStore extends BaseStore {
     const teamData = teamDoc.data();
     return {
       id: teamDoc.id,
-      name: teamData.name
+      name: teamData.name,
+      points: teamData.points
     };
   }
 }

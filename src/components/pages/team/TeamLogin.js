@@ -19,6 +19,7 @@ const JoinForm = ({ teamName, setTeamName, setTeamId }) => {
         const teamId = await addTeam(teamName);
         console.log(teamId);
         setTeamId(teamId.id);
+        setError('');
       } catch (error) {
         console.log(error);
         setError('Такое имя уже существует. Введите другое, пожалуйста.');

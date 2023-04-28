@@ -12,6 +12,8 @@ import Loader from '../Loader.component';
 import TeamLogin from "../components/pages/team/TeamLogin";
 import TeamMainPage from "../components/pages/team/TeamMainPage";
 import TeamContest from "../components/pages/team/TeamContest";
+import TeamResults from "../components/pages/team/TeamResults";
+
 
 function App() {
 
@@ -35,6 +37,7 @@ function App() {
         <Route path="/team/login" element={<TeamLogin />} />
         <Route path="/team/mainPage/:teamId" element={<TeamMainPage />} />
         <Route path="/team/contest/:teamId" element={<TeamContest />} />
+        <Route path="/team/results/:teamId" element={<TeamResults />} />
       </Routes>
     </BrowserRouter>
   );
