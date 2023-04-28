@@ -4,7 +4,7 @@ import getAllQuestions from '../../use_cases/GetAllQuestions';
 import { Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, TextField, FormGroup } from '@mui/material';
 import addAnswer from '../../use_cases/AddAnswer';
 import addPoints from '../../use_cases/AppPoints';
-import Loader from '../../../Loader.component';
+import Loader from '../../common/Loader.component';
 
 function TeamContest() {
     let { teamId } = useParams();
@@ -12,15 +12,15 @@ function TeamContest() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [isLoading, setIsLoading] = useState(true); 
+    const [isLoading, setIsLoading] = useState(true);
     let navigate = useNavigate();
-    
+
     const getQuestionList = async () => {
-        setIsLoading(true); 
+        setIsLoading(true);
         setQuestionList(await getAllQuestions());
-        setIsLoading(false); 
+        setIsLoading(false);
     };
-    
+
     useEffect(() => {
         getQuestionList();
     }, []);
@@ -32,7 +32,7 @@ function TeamContest() {
         setSelectedOptions([]);
         setIsSubmitted(false);
     };
-    
+
     const handlePrevQuestion = () => {
         setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
         setSelectedOptions([]);
@@ -54,7 +54,7 @@ function TeamContest() {
         if (!isCorrect && !currentQuestion.type === 'open') {
             alert(`Неправильно. Правильный ответ: ${currentQuestion.correctAnswer}`);
             addAnswer(teamId, currentQuestion.id, "incorrect");
-          } else {
+        } else {
             alert("Правильно!");
             addAnswer(teamId, currentQuestion.id, "correct");
             console.log(currentQuestion.points);
@@ -67,17 +67,17 @@ function TeamContest() {
     const handleOptionChange = (e) => {
         if (currentQuestion.type === 'open') {
             setSelectedOptions([e.target.value]);
-          } else if (currentQuestion.type === 'one') {
+        } else if (currentQuestion.type === 'one') {
             setSelectedOptions([e.target.value]);
-          } else {
+        } else {
             let updatedAnswers = [...selectedOptions];
             if (e.target.checked) {
-              updatedAnswers.push(e.target.value);
+                updatedAnswers.push(e.target.value);
             } else {
-              updatedAnswers = updatedAnswers.filter((answer) => answer !== e.target.value);
+                updatedAnswers = updatedAnswers.filter((answer) => answer !== e.target.value);
             }
             setSelectedOptions(updatedAnswers);
-          }
+        }
     };
 
     if (isLoading) {
@@ -110,7 +110,7 @@ function TeamContest() {
                                 <FormControlLabel
                                     key={answer}
                                     value={answer}
-                                    control={<Radio  disabled={isSubmitted}/>}
+                                    control={<Radio disabled={isSubmitted} />}
                                     label={answer}
                                 />
                             ))}
@@ -122,7 +122,7 @@ function TeamContest() {
                                 {currentQuestion.answers.map((answer) => (
                                     <FormControlLabel
                                         key={answer}
-                                        control={<Checkbox 
+                                        control={<Checkbox
                                             value={answer}
                                             onChange={handleOptionChange}
                                             checked={selectedOptions && selectedOptions.includes(answer)}

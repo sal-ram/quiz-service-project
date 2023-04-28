@@ -1,5 +1,5 @@
 import BaseStore from './BaseStore';
-import { collection, doc, getDoc, addDoc, onSnapshot, query, limit, where, getDocs, updateDoc, orderBy} from "firebase/firestore";
+import { collection, doc, getDoc, addDoc, onSnapshot, query, limit, where, getDocs, updateDoc, orderBy, deleteDoc } from "firebase/firestore";
 
 class QuestionStore extends BaseStore {
   async get(questionId) {
@@ -10,9 +10,10 @@ class QuestionStore extends BaseStore {
 
   async getAll() {
     const questionsRef = collection(this.firestore, 'questions');
-    let questionsQuery = query(questionsRef, orderBy('order'));  
+    let questionsQuery = query(questionsRef, orderBy('order'));
     const questionsSnapshot = await getDocs(questionsQuery);
     const questions = questionsSnapshot.docs.map(doc => this._convertDocToQuestion(doc));
+
     return questions;
   }
 
@@ -23,11 +24,17 @@ class QuestionStore extends BaseStore {
       order: questionData.order,
       text: questionData.text,
       type: questionData.type,
+      tag: questionData.tag,
       answers: questionData.answers,
       correctAnswer: questionData.correctAnswer,
       points: questionData.points
     };
   }
+
+  async delete(questionId) {
+    return await deleteDoc(doc(this.firestore, "questions", questionId));
+  }
+
 }
 
 export default QuestionStore;

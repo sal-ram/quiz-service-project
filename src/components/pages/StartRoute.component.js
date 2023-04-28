@@ -6,7 +6,7 @@ import { Box, Container, Typography } from '@mui/material';
 export default function StartRoute() {
     let navigate = useNavigate();
     const routeChange = () => {
-        let path = `/login`;
+        let path = `/admin/login`;
         navigate(path);
     }
     return (

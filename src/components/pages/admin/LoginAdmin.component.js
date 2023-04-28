@@ -1,24 +1,51 @@
-import React, { useContext, useEffect } from 'react'
-import Avatar from '@mui/material/Avatar';
+import React, { useContext, useState } from 'react'
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { Navigate } from "react-router-dom"
-import { Context } from '..';
+import { Context } from '../../..';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import Loader from '../Loader.component';
-
-const theme = createTheme();
+import Loader from '../../common/Loader.component';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { userLogin } from '../../use_cases/AuthAdmin';
 
 export default function LoginAdmin() {
+
     const { auth } = useContext(Context);
-    const [user, loading, error] = useAuthState(auth)
+    const [user, loading, error] = useAuthState(auth);
+
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [signError, setSignError] = useState("");
+
+    const theme = createTheme();
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        setEmailError("");
+        setPasswordError("");
+        setSignError("");
+        const data = new FormData(event.currentTarget);
+        let email = data.get('email');
+        let password = data.get('password');
+        if (email === '') {
+            setEmailError("Введите логин");
+        }
+        if (password === '') {
+            setPasswordError("Введите пароль");
+        }
+        if (email && password) {
+            let response = userLogin(email, password);
+            response.then((result) => {
+                if (result === "wrong-input") {
+                    setSignError("Неверный логин и/или пароль")
+                }
+            })
+        }
+    };
 
     if (loading) {
         return (
@@ -26,29 +53,9 @@ export default function LoginAdmin() {
         )
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-        signInWithEmailAndPassword(auth, data.get('email'), data.get('password'))
-            .then((userCredential) => {
-                // Signed in
-                const user = userCredential.user;
-                //navigate("/home")
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage)
-            });
-    };
-
     if (user) {
         return (
-            <Navigate to='/admin' />
+            <Navigate to='/admin/home' />
         )
     } else {
         return (
@@ -63,9 +70,7 @@ export default function LoginAdmin() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
+
                         <Typography component="h1" variant="h5">
                             Вход в систему
                         </Typography>
@@ -79,6 +84,8 @@ export default function LoginAdmin() {
                                 name="email"
                                 autoComplete="email"
                                 autoFocus
+                                error={!!emailError}
+                                helperText={emailError ? emailError : ''}
                             />
                             <TextField
                                 margin="normal"
@@ -89,7 +96,17 @@ export default function LoginAdmin() {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
+                                error={!!passwordError}
+                                helperText={passwordError ? passwordError : ''}
                             />
+                            {signError &&
+                                <Typography variant="subtitle1" color={theme.palette.error.main} sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center'
+                                }}>
+                                    {signError}
+                                </Typography>}
                             <Button
                                 type="submit"
                                 fullWidth
