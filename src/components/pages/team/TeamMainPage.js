@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import getTeam from '../../use_cases/GetTeam';
 import updateTeam from '../../use_cases/UpdateTeam';
-import { Button } from '@mui/material';
 import getAllTeams from '../../use_cases/GetAllTeams';
 import Loader from '../../common/Loader.component';
+import "../../../styles/TeamMainPage.css"
 
 const TeamMainPage = () => {
   const [teamName, setTeamName] = useState('');
@@ -50,10 +50,12 @@ const TeamMainPage = () => {
 
   const handleInputChange = (event) => {
     setTeamName(event.target.value);
+    setError('');
   };
 
   const handleCancelClick = () => {
     setIsEditing(false);
+    setError('');
   };
 
   useEffect(() => {
@@ -69,33 +71,46 @@ const TeamMainPage = () => {
   }
 
   return (
-    <div className='main'>
-      <h2>Ваше команда:</h2>
-      {isEditing ? (
-        <input type="text" value={teamName} onChange={handleInputChange} />
-      ) : (
-        <div>{teamName}</div>
-      )}
-      {isEditing ? (
-        <div>
-          <Button onClick={handleSaveClick}>Save</Button>
-          <Button onClick={handleCancelClick}>Cancel</Button>
+    <div className='team-main-page'>
+      <div className=''>
+        <div className='team-name'>
+          <h1>Ваша команда:</h1>
+          {isEditing ? (
+            <div>
+              <input type="text" value={teamName} onChange={handleInputChange} />
+              {error && <div className='error'>{error}</div>}
+            </div>
+          ) : (
+            <h1>{teamName}</h1>
+          )}
+          {isEditing ? (
+            <div>
+              <button onClick={handleSaveClick}><img src="/svg/check.svg" alt="save" /></button>
+              <button onClick={handleCancelClick}><img src="/svg/close.svg" alt="cancel" /></button>
+            </div>
+          ) : (
+            <button onClick={handleEditClick}><img src="/svg/pencil.svg" alt="edit" /></button>
+          )}
         </div>
-      ) : (
-        <Button onClick={handleEditClick}>Edit</Button>
-      )}
-      <h2>Список активных команд:</h2>
-      <div>
-        {teamList.map((team) => (
-          <>
-            {team.id != teamId && (
-              <h3>{team.name}</h3>
-            )}
-          </>
-        ))}
-      </div>
-      {error && <div>{error}</div>}
-      <h2>Сессия еще не началась</h2>
+        <div className='block-second'>
+          <div className='team-list'>
+            <h2>Список активных команд:</h2>
+            <div className='team-list-field'>
+              {teamList.map((team) => (
+                <>
+                  {team.id != teamId && (
+                    <h3>{team.name}</h3>
+                  )}
+                </>
+              ))}
+            </div>
+          </div>
+          <div className='session-time'>
+            <h2>Сессия еще не началась</h2>
+            <h3>Плановое время начала:</h3>
+          </div>
+        </div>
+        </div>
     </div>
   );
 };

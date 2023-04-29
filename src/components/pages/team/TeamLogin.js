@@ -1,4 +1,4 @@
-import { Button, FormControl, Input } from '@mui/material';
+import { FormControl } from '@mui/material';
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import addTeam from '../../use_cases/AddTeam';
@@ -28,23 +28,23 @@ const JoinForm = ({ teamName, setTeamName, setTeamId }) => {
   };
 
   return (
-    <form onSubmit={(e) => {
+    <form className="join-form" onSubmit={(e) => {
       e.preventDefault();
       joinGame();
     }}>
-      <FormControl>
-        <p>Регистрация команды</p>
-        <label htmlFor="my-input">Название</label>
-        <Input
+      <h1>Регистрация команды</h1>
+      <div className='team-form'>
+        <label className="input-label">Название</label>
+        <input className='input'
           placeholder="team"
           value={teamName}
           onChange={(e) => setTeamName(e.target.value)}
         />
-      </FormControl>
-      <Button variant="contained" type="submit">
+        {error && <div className='error'>{error}</div>}
+      </div>
+      <button type="submit">
         Зарегистрироваться
-      </Button>
-      {error && <div>{error}</div>}
+      </button>
     </form>
   );
 };
