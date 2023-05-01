@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 const TeamMainPage = () => {
   const [teamName, setTeamName] = useState('');
+  const [teamNameInput, setTeamNameInput] = useState(teamName);
   const { teamId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [teamList, setTeamList] = useState([]);
@@ -40,7 +41,7 @@ const TeamMainPage = () => {
       setError('Слишком длинное. Должно быть не более 32 символов.');
     } else {
       try {
-        const team = await updateTeam(teamId, teamName);
+        const team = await updateTeam(teamId, teamNameInput);
         setTeamName(team.name);
         setIsEditing(false);
         setError('');
@@ -52,11 +53,12 @@ const TeamMainPage = () => {
   };
 
   const handleInputChange = (event) => {
-    setTeamName(event.target.value);
+    setTeamNameInput(event.target.value);
     setError('');
   };
 
   const handleCancelClick = () => {
+    setTeamNameInput(teamName);
     setIsEditing(false);
     setError('');
   };
@@ -64,7 +66,7 @@ const TeamMainPage = () => {
   useEffect(() => {
     if (teamId) {
       getTeam(teamId)
-        .then(team => setTeamName(team.name))
+        .then(team => {setTeamName(team.name); setTeamNameInput(team.name)})
         .catch(error => console.error(error));
     }
   }, [teamId]);
@@ -80,7 +82,7 @@ const TeamMainPage = () => {
           <h1>Ваша команда:</h1>
           {isEditing ? (
             <div>
-              <input type="text" value={teamName} onChange={handleInputChange} />
+              <input type="text" value={teamNameInput} onChange={handleInputChange} />
               {error && <div className='error'>{error}</div>}
             </div>
           ) : (
