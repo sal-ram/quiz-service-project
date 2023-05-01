@@ -4,12 +4,14 @@ import getAllTeams from '../../use_cases/GetAllTeams';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Loader from '../../common/Loader.component';
+import "../../../styles/TeamResults.css"
 
 function TeamResults() {
   const [teamList, setTeamList] = useState([]);
   const { teamId } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  let index = 1;
 
   const getTeamList = async () => {
     setIsLoading(true);
@@ -36,14 +38,24 @@ function TeamResults() {
   }
 
   return (
-    <div>
-      <p>Результаты сессии:</p>
-      <div>
-        {teamList.map((team) => (
-          <h3>{team.name} - {team.points} {getPointsText(team.points)}</h3>
-        ))}
+    <div className='team-results-page'>
+      <button onClick={() => navigate('/')}>Вернуться на главную страницу</button>
+      <div className='teams-results'>
+        <h1>Результаты сессии:</h1>
+        <div className='teams-table'>
+          {teamList.map((team) => (
+            <div className='table-item'>
+              <div className='team-name'>
+                <h2>{index++}</h2>
+                <h3>{team.name}</h3>
+              </div>
+              <h2 className='points'>
+                {team.points} {getPointsText(team.points)}
+              </h2>
+            </div>
+          ))}
+        </div>
       </div>
-      <Button onClick={() => navigate('/')}>Вернуться на главную страницу</Button>
     </div>
   )
 }

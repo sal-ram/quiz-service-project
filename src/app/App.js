@@ -17,6 +17,7 @@ import TeamResults from "../components/pages/team/TeamResults";
 import Header from '../components/common/Header.component';
 import { Box, Container } from '@mui/system';
 import FinalQuizCreation from '../components/pages/admin/FinalQuizCreation';
+import TeamWaitingPage from '../components/pages/team/TeamWaitingPage';
 
 function App() {
 
@@ -31,11 +32,11 @@ function App() {
 
   return (
     <>
-      <Container>
+      <div>
         <Box>
           <Header />
         </Box>
-        <Box>
+        <div>
           <BrowserRouter>
             <Routes>
               <Route path="/start" element={<StartRoute />} />
@@ -48,10 +49,11 @@ function App() {
               <Route path="/team/contest/:teamId" element={<TeamContest />} />
               <Route path="/team/results/:teamId" element={<TeamResults />} />
               <Route path="*" element={<Navigate to="/start" replace />} />
+              <Route path="/team/waiting/:teamId" element={<TeamWaitingPage/>} />
             </Routes>
           </BrowserRouter>
-        </Box>
-      </Container>
+        </div>
+      </div>
 
     </>
   );

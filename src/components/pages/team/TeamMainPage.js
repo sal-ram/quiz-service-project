@@ -5,6 +5,9 @@ import updateTeam from '../../use_cases/UpdateTeam';
 import getAllTeams from '../../use_cases/GetAllTeams';
 import Loader from '../../common/Loader.component';
 import "../../../styles/TeamMainPage.css"
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 
 const TeamMainPage = () => {
   const [teamName, setTeamName] = useState('');
@@ -71,8 +74,8 @@ const TeamMainPage = () => {
   }
 
   return (
-    <div className='team-main-page'>
-      <div className=''>
+    <div className='team-main-page-background'>
+      <div className='team-main-page'>
         <div className='team-name'>
           <h1>Ваша команда:</h1>
           {isEditing ? (
@@ -85,11 +88,17 @@ const TeamMainPage = () => {
           )}
           {isEditing ? (
             <div>
-              <button onClick={handleSaveClick}><img src="/svg/check.svg" alt="save" /></button>
-              <button onClick={handleCancelClick}><img src="/svg/close.svg" alt="cancel" /></button>
+              <button onClick={handleSaveClick}>
+                <CheckIcon fontSize="large"/>
+              </button>
+              <button onClick={handleCancelClick}>
+                <CloseIcon fontSize="large"/>
+              </button>
             </div>
           ) : (
-            <button onClick={handleEditClick}><img src="/svg/pencil.svg" alt="edit" /></button>
+            <button onClick={handleEditClick}>
+              <EditIcon fontSize='large'/>  
+            </button>
           )}
         </div>
         <div className='block-second'>
@@ -108,9 +117,10 @@ const TeamMainPage = () => {
           <div className='session-time'>
             <h2>Сессия еще не началась</h2>
             <h3>Плановое время начала:</h3>
+            <h3>12:00</h3>
           </div>
         </div>
-        </div>
+      </div>
     </div>
   );
 };

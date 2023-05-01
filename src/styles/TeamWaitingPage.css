@@ -1,0 +1,10 @@
+.team-waiting-page {
+    margin: 10% auto;
+    width: 640px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 48px;
+    text-align: center;
+}
