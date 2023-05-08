@@ -10,15 +10,12 @@ import { StyledTitle } from './style/Title.styled';
 import { StyledButton } from './style/Button.styled';
 import { deleteQuestion } from '../../use_cases/DeleteQuestion';
 import { EditQuestionModal } from './EditModal/EditQuestionModal';
+import { createQuiz } from '../../use_cases/CreateQuiz';
 
 
 export default function CreateQuiz() {
 
     let navigate = useNavigate();
-    const routeChange = () => {
-        let path = `/admin/create-quiz-final`;
-        navigate(path);
-    }
 
     const routeChangeBack = () => {
         let path = `/admin/home`;
@@ -29,6 +26,13 @@ export default function CreateQuiz() {
     const [questions, setQuestions] = useState([]);
     const [createModal, setCreateModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
+
+    const routeChange = async () => {
+        console.log(questions);
+        const quiz = await createQuiz(questions);
+        let path = `/admin/create-quiz-final/${quiz.id}`;
+        navigate(path);
+    }
 
     const addQuestion = () => {
         console.log("modal");

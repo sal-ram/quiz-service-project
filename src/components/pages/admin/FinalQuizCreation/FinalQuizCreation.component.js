@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
+import { useParams } from 'react-router-dom';
 import Loader from '../../../common/Loader.component';
 import { Box, Container } from '@mui/system';
 import { Checkbox, FormControlLabel, FormGroup, Grid, Toolbar, Typography } from '@mui/material';
@@ -9,7 +10,8 @@ import QuestionCard from '../QuestionCard.component';
 import getAllQuestions from '../../../use_cases/GetAllQuestions';
 import getQuiz from '../../../use_cases/GetQuiz';
 import { Settings } from './Settings';
-
+import { collection, onSnapshot } from "firebase/firestore";
+import { firestore } from "../../../../firebase";
 
 export default function FinalQuizCreation() {
 
@@ -22,11 +24,12 @@ export default function FinalQuizCreation() {
     const createQuiz = async () => {
     }
 
+    const { quizId } = useParams();
     const [loading, setLoading] = useState(false);
     const [questions, setQuestions] = useState([]);
     const [quiz, setQuiz] = useState([]);
     const [questionList, setQuestionList] = useState([]);
-    const [teams, setTeams] = useState([{ name: "1234" }, { name: "sdfbg" }]);
+    const [teams, setTeams] = useState([]);
 
     const fetchData2 = useCallback(async () => {
         setLoading(true);
@@ -44,62 +47,28 @@ export default function FinalQuizCreation() {
         setQuestionList(current_questions);
         setLoading(false);
     }, [])
-
+    
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(firestore, "teams"), (snapshot) => {
+            const newTeams = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setTeams(newTeams);
+        });
+        return () => unsubscribe();
+    }, []);
+    
     useEffect(() => {
         setLoading(true);
-        const fetchData = async () => {
-            setLoading(true);
-            const questions = await getAllQuestions();
-            setQuestions(questions);
-            const data = await getQuiz();
-            setQuiz(data);
-            let current_questions = [];
-            console.log(quiz);
-            setLoading(false);
+        if (quizId) {
+            getQuiz(quizId)
+              .then(quiz => {setQuiz(quiz); 
+                const questionList = Object.keys(quiz.questions).map(key => quiz.questions[key]);
+                setQuestions(questionList)})
+              .catch(error => console.error(error));
         }
-
-        // fetchData().catch(console.error);;
-
-        getAllQuestions().then((result) => {
-            setQuestions(result);
-            setLoading(false);
-            // console.log(questions);
-        });
-
-        getQuiz().then(setQuiz);
-
-        // let current_questions = [];
-        // console.log(quiz);
-        // questions.forEach(function (item, i, arr) {
-        //     if (quiz.questions.includes(item.id)) {
-        //         current_questions.push(item);
-        //     }
-        // });
-        // setQuestionList(current_questions);
-
-
-
-        // getQuiz()
-        //     .then((result) => {
-        //         setQuiz(result);
-        //     })
-        //     .then(() =>
-        //         getAllQuestions()
-        //             .then((result) => {
-        //                 setQuestions(result);
-        //                 let current_questions = [];
-        //                 console.log(quiz);
-        //                 result.forEach(function (item, i, arr) {
-        //                     // if (quiz.questions.includes(item.id)) {
-        //                     //     current_questions.push(item);
-        //                     // }
-        //                 });
-        //                 setQuestionList(current_questions);
-        //             })
-        //             .then(() => {
-        //                 setLoading(false);
-        //             }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setLoading(false);
     }, []);
 
     const handleStart = () => {

@@ -4,7 +4,6 @@ class BaseStore {
   constructor(props) {
     this.firestore = firestore;
     this.auth = auth;
-    // this.questionsList = [];
   }
 }
 

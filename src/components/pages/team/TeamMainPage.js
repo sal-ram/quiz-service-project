@@ -8,11 +8,14 @@ import "../../../styles/TeamMainPage.css"
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import { collection, onSnapshot } from "firebase/firestore";
+import { firestore } from "../../../firebase";
 
 const TeamMainPage = () => {
   const [teamName, setTeamName] = useState('');
   const [teamNameInput, setTeamNameInput] = useState(teamName);
   const { teamId } = useParams();
+  const quizId = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [teamList, setTeamList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,12 +23,21 @@ const TeamMainPage = () => {
 
   const getTeamList = async () => {
     setIsLoading(true);
-    setTeamList(await getAllTeams());
+    setTeamList(await getAllTeams(quizId));
     setIsLoading(false);
   };
 
   useEffect(() => {
-    getTeamList();
+    setIsLoading(true);
+    const unsubscribe = onSnapshot(collection(firestore, "teams"), (snapshot) => {
+        const newTeams = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTeamList(newTeams);
+    });
+    setIsLoading(false);
+    return () => unsubscribe();
   }, []);
 
   const handleEditClick = () => {

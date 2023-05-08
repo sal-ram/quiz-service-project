@@ -2,6 +2,22 @@ import BaseStore from './BaseStore';
 import { collection, doc, getDoc, addDoc, onSnapshot, query, limit, where, getDocs, updateDoc, orderBy, deleteDoc, setDoc } from "firebase/firestore";
 
 class QuestionStore extends BaseStore {
+
+  async create(questionObj) {
+    const questionRef = await addDoc(collection(this.firestore, "questions"), {
+      order: questionObj.order,
+      text: questionObj.text,
+      tag: questionObj.tag,
+      answers: questionObj.answers,
+      correctAnswer: questionObj.correctAnswer,
+      points: questionObj.points,
+      type: questionObj.type
+    });
+    const questionSnapshot = await getDoc(questionRef);
+    console.log(questionSnapshot);
+    return this._convertDocToAnswer(questionSnapshot);
+  }
+  
   async get(questionId) {
     const questionRef = doc(collection(this.firestore, "questions"), questionId);
     const questionSnapshot = await getDoc(questionRef);
@@ -13,8 +29,11 @@ class QuestionStore extends BaseStore {
     let questionsQuery = query(questionsRef, orderBy('order'));
     const questionsSnapshot = await getDocs(questionsQuery);
     const questions = questionsSnapshot.docs.map(doc => this._convertDocToQuestion(doc));
-    // this.questionsList = questions;
     return questions;
+  }
+
+  async delete(questionId) {
+    return await deleteDoc(doc(this.firestore, "questions", questionId));
   }
 
   _convertDocToQuestion(questionDoc) {
@@ -30,23 +49,6 @@ class QuestionStore extends BaseStore {
       points: questionData.points
     };
   }
-
-  async delete(questionId) {
-    return await deleteDoc(doc(this.firestore, "questions", questionId));
-  }
-
-  async create(questionObj) {
-    return await addDoc(collection(this.firestore, "questions"), {
-      order: questionObj.order,
-      text: questionObj.text,
-      tag: questionObj.tag,
-      answers: questionObj.answers,
-      correctAnswer: questionObj.correctAnswer,
-      points: questionObj.points,
-      type: questionObj.type
-    });
-  }
-
 }
 
 export default QuestionStore;

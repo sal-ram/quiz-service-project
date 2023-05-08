@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Navigate } from "react-router-dom";
-import getAllQuestions from '../../use_cases/GetAllQuestions';
 import { Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, TextField, FormGroup } from '@mui/material';
 import addAnswer from '../../use_cases/AddAnswer';
 import addPoints from '../../use_cases/AppPoints';
@@ -8,12 +7,14 @@ import Loader from '../../common/Loader.component';
 import "../../../styles/TeamContest.css"
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import getQuizByCode from '../../use_cases/GetQuizByCode';
 
 const SECONDS_TO_QUESTION = 1090;
 
 function TeamContest() {
-    let { teamId } = useParams();
+    let { teamId, quizCode } = useParams();
     const [questionList, setQuestionList] = useState([]);
+    const [quiz, setQuiz] = useState();
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -21,12 +22,6 @@ function TeamContest() {
     const [ timeLeft, setTimeLeft ] = useState(SECONDS_TO_QUESTION);
     let navigate = useNavigate();
     let storedAnswer;
-
-    const getQuestionList = async () => {
-        setIsLoading(true);
-        setQuestionList(await getAllQuestions());
-        setIsLoading(false);
-    };
 
     const calculateTimeLeft = date => {
         const difference = (date - Date.now()) / 1000;
@@ -56,7 +51,15 @@ function TeamContest() {
     };
 
     useEffect(() => {
-        getQuestionList();
+        setIsLoading(true);
+        if (quizCode) {
+            getQuizByCode(quizCode)
+              .then(quiz => {setQuiz(quiz); 
+                const questionList = Object.keys(quiz.questions).map(key => quiz.questions[key]);
+                setQuestionList(questionList)})
+              .catch(error => console.error(error));
+        }
+        setIsLoading(false);
         const endTime = localStorage.getItem(`endTime-${teamId}`);
         if (endTime) {
             const timeLeft = calculateTimeLeft(new Date(endTime));
@@ -149,7 +152,7 @@ function TeamContest() {
 
     const handleCompleteButton = () => {
         localStorage.clear();
-        navigate(`/team/results/${teamId}`);
+        navigate(`/team/waiting/${quizCode}/${teamId}`);
     }
 
     if (isLoading) {

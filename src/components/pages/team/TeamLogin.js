@@ -1,28 +1,41 @@
-import { FormControl } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import addTeam from '../../use_cases/AddTeam';
 import "../../../styles/TeamLogin.css"
+import getQuizByCode from '../../use_cases/GetQuizByCode';
 
-const JoinForm = ({ teamName, setTeamName, setTeamId }) => {
-  const [error, setError] = useState('');
+const JoinForm = ({ teamName, setTeamName, setTeamId, quizCode, setQuizCode}) => {
+  const [errorName, setErrorName] = useState('');
+  const [errorQuiz, setErrorQuiz] = useState('');
 
   const joinGame = async () => {
     if (teamName.trim() === '') {
-        setError('Введите название');
+        setErrorName('Введите название');
     } else if (teamName.length < 3) {
-        setError('Слишком короткое. Должно быть не менее 3 символов.');
+        setErrorName('Слишком короткое. Должно быть не менее 3 символов.');
     } else if (teamName.length > 32) {
-        setError('Слишком длинное. Должно быть не более 32 символов.');
+        setErrorName('Слишком длинное. Должно быть не более 32 символов.');
     } else {
       try {
-        const teamId = await addTeam(teamName);
-        console.log(teamId);
-        setTeamId(teamId.id);
-        setError('');
+        if (quizCode.trim() === '') {
+          setErrorQuiz('Введите номер квиза');
+        } else {
+          const quiz = getQuizByCode(quizCode);
+          console.log(quiz);
+          if (quiz) {
+            setQuizCode(quizCode);
+            setErrorQuiz('');
+            const teamId = await addTeam(teamName);
+            console.log(teamId);
+            setTeamId(teamId.id);
+            setErrorName('');
+          } else {
+            setErrorQuiz('Неверный номер квиза');
+          }
+        }
       } catch (error) {
         console.log(error);
-        setError('Такое имя уже существует. Введите другое, пожалуйста.');
+        setErrorName('Такое имя уже существует. Введите другое, пожалуйста.');
       }
     }
   };
@@ -40,7 +53,13 @@ const JoinForm = ({ teamName, setTeamName, setTeamId }) => {
           value={teamName}
           onChange={(e) => setTeamName(e.target.value)}
         />
-        {error && <div className='error'>{error}</div>}
+        {errorName && <div className='error'>{errorName}</div>}
+        <input className='input'
+          placeholder="quiz id"
+          value={quizCode}
+          onChange={(e) => setQuizCode(e.target.value)}
+        />
+        {errorQuiz && <div className='error'>{errorQuiz}</div>}
       </div>
       <button type="submit">
         Зарегистрироваться
@@ -52,16 +71,19 @@ const JoinForm = ({ teamName, setTeamName, setTeamId }) => {
 const TeamLogin = () => {
   const [teamName, setTeamName] = useState('');
   const [teamId, setTeamId] = useState('');
+  const [quizCode, setQuizCode] = useState('');
 
   return (
     <div className='main'>
-      {teamId ? (
-        <Navigate to={`/team/mainPage/${teamId}`} />
+      {teamId && quizCode ? (
+        <Navigate to={`/team/mainPage/${quizCode}/${teamId}`} />
       ) : (
         <JoinForm
           teamName={teamName}
           setTeamName={setTeamName}
           setTeamId={setTeamId}
+          quizCode={quizCode}
+          setQuizCode={setQuizCode}
         />
       )}
     </div>

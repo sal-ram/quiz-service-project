@@ -43,16 +43,16 @@ function App() {
           <Route path="/admin/login" element={user ? <Navigate to="/admin/home" /> : <LoginAdmin />} />
           <Route path="/admin/home" element={user ? <AdminHome /> : <Navigate to="/start" />} />
           <Route path="/admin/create-quiz" element={user ? <CreateQuiz /> : <Navigate to="/start" />} />
-          <Route path="/admin/create-quiz-final" element={user ? <FinalQuizCreation /> : <Navigate to="/start" />} />
+          <Route path="/admin/create-quiz-final/:quizId" element={user ? <FinalQuizCreation /> : <Navigate to="/start" />} />
           <Route path="/admin/active-session" element={user ? <ActiveSession /> : <Navigate to="/start" />} />
           <Route path="/admin/check-answers" element={user ? <TextQuestionCheck /> : <Navigate to="/start" />} />
           <Route path="/admin/results" element={user ? <TeamsResults /> : <Navigate to="/start" />} />
           <Route path="/team/login" element={<TeamLogin />} />
-          <Route path="/team/mainPage/:teamId" element={<TeamMainPage />} />
-          <Route path="/team/contest/:teamId" element={<TeamContest />} />
-          <Route path="/team/results/:teamId" element={<TeamResults />} />
+          <Route path="/team/mainPage/:quizCode/:teamId" element={<TeamMainPage />} />
+          <Route path="/team/contest/:quizCode/:teamId" element={<TeamContest />} />
+          <Route path="/team/results/:quizCode/:teamId" element={<TeamResults />} />
           <Route path="*" element={<Navigate to="/start" replace />} />
-          <Route path="/team/waiting/:teamId" element={<TeamWaitingPage />} />
+          <Route path="/team/waiting/:quizCode/:teamId" element={<TeamWaitingPage />} />
         </Routes>
       </BrowserRouter>
     </>

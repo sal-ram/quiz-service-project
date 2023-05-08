@@ -1,7 +1,7 @@
 import QuizStore from "../store/QuizStore";
 
-const getQuiz = () => {
-    return new QuizStore().get();
+const getQuiz = (quizId) => {
+    return new QuizStore().get(quizId);
 };
 
 export default getQuiz;
