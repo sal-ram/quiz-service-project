@@ -31,23 +31,6 @@ export default function FinalQuizCreation() {
     const [questionList, setQuestionList] = useState([]);
     const [teams, setTeams] = useState([]);
 
-    const fetchData2 = useCallback(async () => {
-        setLoading(true);
-        const questions = await getAllQuestions();
-        setQuestions(questions);
-        const data = await getQuiz();
-        setQuiz(data);
-        let current_questions = [];
-        console.log(quiz);
-        questions.forEach(function (item, i, arr) {
-            if (quiz.questions.includes(item.id)) {
-                current_questions.push(item);
-            }
-        });
-        setQuestionList(current_questions);
-        setLoading(false);
-    }, [])
-    
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(firestore, "teams"), (snapshot) => {
             const newTeams = snapshot.docs.map((doc) => ({
@@ -73,7 +56,7 @@ export default function FinalQuizCreation() {
 
     const handleStart = () => {
         // навигейт кудато и отправить что-то на сервер, запустить
-        let path = `/admin/active-session`;
+        let path = `/admin/active-session/${quizId}`;
         navigate(path);
     }
 

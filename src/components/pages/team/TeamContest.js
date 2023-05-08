@@ -19,7 +19,8 @@ function TeamContest() {
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [ timeLeft, setTimeLeft ] = useState(SECONDS_TO_QUESTION);
+    const [ timeLeft, setTimeLeft ] = useState(0);
+    const [timer, setTimer] = useState(0);
     let navigate = useNavigate();
     let storedAnswer;
 
@@ -56,20 +57,21 @@ function TeamContest() {
             getQuizByCode(quizCode)
               .then(quiz => {setQuiz(quiz); 
                 const questionList = Object.keys(quiz.questions).map(key => quiz.questions[key]);
-                setQuestionList(questionList)})
+                setQuestionList(questionList);
+                setTimer(Math.floor(timer * 60))})
               .catch(error => console.error(error));
         }
         setIsLoading(false);
-        const endTime = localStorage.getItem(`endTime-${teamId}`);
+        const endTime = localStorage.getItem(`endTime`);
         if (endTime) {
             const timeLeft = calculateTimeLeft(new Date(endTime));
             setTimeLeft(timeLeft);
             startTimer({ seconds: timeLeft, intervalCallback: setTimeLeft, endedCallback: handleTimerEnd });
         } else {
-            const endTime = new Date(Date.now() + 1000 * SECONDS_TO_QUESTION);
-            localStorage.setItem(`endTime-${teamId}`, endTime);
-            setTimeLeft(SECONDS_TO_QUESTION);
-            startTimer({ seconds: SECONDS_TO_QUESTION, intervalCallback: setTimeLeft, endedCallback: handleTimerEnd });
+            const endTime = new Date(Date.now() + 1000 * timer);
+            localStorage.setItem(`endTime`, endTime);
+            setTimeLeft(timer);
+            startTimer({ seconds: timer, intervalCallback: setTimeLeft, endedCallback: handleTimerEnd });
         }
 
         storedAnswer = localStorage.getItem(`answer-${teamId}-${currentQuestionIndex}`);

@@ -1,19 +1,47 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import { Box, Container, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar } from '@mui/material';
 import { StyledButton } from './style/Button.styled';
 import { StyledTitle } from './style/Title.styled';
+import getAllTeams from '../../use_cases/GetAllTeams';
+import Loader from '../../common/Loader.component';
 
 
 
 export default function TeamsResults() {
     let navigate = useNavigate();
 
-    const [teams, setTeams] = useState([{ name: "wcj kev", points: 0 }, { name: "nwvlr", points: 2 }])
+    const [teamList, setTeamList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    let index = 1;
 
     const handleBack = () => {
         let path = `/admin/home`;
         navigate(path);
+    }
+
+    const getTeamList = async () => {
+        setIsLoading(true);
+        setTeamList(await getAllTeams());
+        setIsLoading(false);
+      };
+    
+    useEffect(() => {
+        getTeamList();
+    }, []);
+
+    const getPointsText = (points) => {
+        if (points === 1) {
+          return 'балл';
+        } else if (points >= 2 && points <= 4) {
+          return 'балла';
+        } else {
+          return 'баллов';
+        }
+    }
+
+    if (isLoading) {
+        return <Loader />; // Render loader while data is loading
     }
 
     return (
@@ -40,27 +68,19 @@ export default function TeamsResults() {
             <StyledTitle component="h1" variant="h5" sx={{ mb: 2 }}>
                 Результаты сессии:
             </StyledTitle>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableBody>
-                        {teams.sort((a, b) => b.points - a.points).map((t, index) => (
-                            <TableRow
-                                key={t.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">
-                                    {index}
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                    {t.name}
-                                </TableCell>
-                                <TableCell >{t.points} баллов</TableCell>
-
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <div className='teams-table'>
+                {teamList.map((team) => (
+                    <div className='table-item'>
+                    <div className='team-name'>
+                        <h2>{index++}</h2>
+                        <h3>{team.name}</h3>
+                    </div>
+                    <h2 className='points'>
+                        {team.points} {getPointsText(team.points)}
+                    </h2>
+                    </div>
+                ))}
+            </div>
         </Container>
     )
 }

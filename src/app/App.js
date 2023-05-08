@@ -44,9 +44,9 @@ function App() {
           <Route path="/admin/home" element={user ? <AdminHome /> : <Navigate to="/start" />} />
           <Route path="/admin/create-quiz" element={user ? <CreateQuiz /> : <Navigate to="/start" />} />
           <Route path="/admin/create-quiz-final/:quizId" element={user ? <FinalQuizCreation /> : <Navigate to="/start" />} />
-          <Route path="/admin/active-session" element={user ? <ActiveSession /> : <Navigate to="/start" />} />
-          <Route path="/admin/check-answers" element={user ? <TextQuestionCheck /> : <Navigate to="/start" />} />
-          <Route path="/admin/results" element={user ? <TeamsResults /> : <Navigate to="/start" />} />
+          <Route path="/admin/active-session/:quizId" element={user ? <ActiveSession /> : <Navigate to="/start" />} />
+          <Route path="/admin/check-answers/:quizId" element={user ? <TextQuestionCheck /> : <Navigate to="/start" />} />
+          <Route path="/admin/results/:quizId" element={user ? <TeamsResults /> : <Navigate to="/start" />} />
           <Route path="/team/login" element={<TeamLogin />} />
           <Route path="/team/mainPage/:quizCode/:teamId" element={<TeamMainPage />} />
           <Route path="/team/contest/:quizCode/:teamId" element={<TeamContest />} />

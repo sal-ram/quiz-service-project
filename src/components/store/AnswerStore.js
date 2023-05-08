@@ -13,6 +13,7 @@ class AnwerStore extends BaseStore {
         return null;
       }
       const docSnapshot = querySnapshot.docs[0];
+      console.log(teamId);
       return this._convertDocToAnswer(docSnapshot);
   }
 
@@ -27,6 +28,16 @@ class AnwerStore extends BaseStore {
     return this._convertDocToAnswer(answerSnapshot);
   }
 
+  async getAll() {
+    const answersRef = collection(this.firestore, 'answers');
+    const answersQuery = query(answersRef);
+    const answersSnapshot = await getDocs(answersQuery);
+
+    const answers = answersSnapshot.docs.map((doc) => this._convertDocToAnwers(doc));
+
+    return answers;
+  }
+  
   _convertDocToAnswer(answerDoc) {
     const answerData = answerDoc.data();
     return {
