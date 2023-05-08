@@ -13,11 +13,13 @@ import TeamLogin from "../components/pages/team/TeamLogin";
 import TeamMainPage from "../components/pages/team/TeamMainPage";
 import TeamContest from "../components/pages/team/TeamContest";
 import TeamResults from "../components/pages/team/TeamResults";
-
 import Header from '../components/common/Header.component';
-import { Box, Container } from '@mui/system';
-import FinalQuizCreation from '../components/pages/admin/FinalQuizCreation';
+import { Box } from '@mui/system';
+import FinalQuizCreation from '../components/pages/admin/FinalQuizCreation/FinalQuizCreation.component';
 import TeamWaitingPage from '../components/pages/team/TeamWaitingPage';
+import ActiveSession from '../components/pages/admin/ActiveSession.component';
+import TextQuestionCheck from '../components/pages/admin/TextQuestionCheck.component';
+import TeamsResults from '../components/pages/admin/TeamsResults';
 
 function App() {
 
@@ -32,29 +34,27 @@ function App() {
 
   return (
     <>
-      <div>
-        <Box>
-          <Header />
-        </Box>
-        <div>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/start" element={<StartRoute />} />
-              <Route path="/admin/login" element={user ? <Navigate to="/admin/home" /> : <LoginAdmin />} />
-              <Route path="/admin/home" element={user ? <AdminHome /> : <Navigate to="/start" />} />
-              <Route path="/admin/create-quiz" element={user ? <CreateQuiz /> : <Navigate to="/start" />} />
-              <Route path="/admin/create-quiz-final" element={user ? <FinalQuizCreation /> : <Navigate to="/start" />} />
-              <Route path="/team/login" element={<TeamLogin />} />
-              <Route path="/team/mainPage/:teamId" element={<TeamMainPage />} />
-              <Route path="/team/contest/:teamId" element={<TeamContest />} />
-              <Route path="/team/results/:teamId" element={<TeamResults />} />
-              <Route path="*" element={<Navigate to="/start" replace />} />
-              <Route path="/team/waiting/:teamId" element={<TeamWaitingPage/>} />
-            </Routes>
-          </BrowserRouter>
-        </div>
-      </div>
-
+      <Box>
+        <Header />
+      </Box>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/start" element={<StartRoute />} />
+          <Route path="/admin/login" element={user ? <Navigate to="/admin/home" /> : <LoginAdmin />} />
+          <Route path="/admin/home" element={user ? <AdminHome /> : <Navigate to="/start" />} />
+          <Route path="/admin/create-quiz" element={user ? <CreateQuiz /> : <Navigate to="/start" />} />
+          <Route path="/admin/create-quiz-final" element={user ? <FinalQuizCreation /> : <Navigate to="/start" />} />
+          <Route path="/admin/active-session" element={user ? <ActiveSession /> : <Navigate to="/start" />} />
+          <Route path="/admin/check-answers" element={user ? <TextQuestionCheck /> : <Navigate to="/start" />} />
+          <Route path="/admin/results" element={user ? <TeamsResults /> : <Navigate to="/start" />} />
+          <Route path="/team/login" element={<TeamLogin />} />
+          <Route path="/team/mainPage/:teamId" element={<TeamMainPage />} />
+          <Route path="/team/contest/:teamId" element={<TeamContest />} />
+          <Route path="/team/results/:teamId" element={<TeamResults />} />
+          <Route path="*" element={<Navigate to="/start" replace />} />
+          <Route path="/team/waiting/:teamId" element={<TeamWaitingPage />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

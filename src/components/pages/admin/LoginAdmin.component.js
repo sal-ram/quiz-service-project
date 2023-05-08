@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react'
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
@@ -11,6 +10,8 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import Loader from '../../common/Loader.component';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { userLogin } from '../../use_cases/AuthAdmin';
+import { StyledButton } from './style/Button.styled';
+import { StyledTitle } from './style/Title.styled';
 
 export default function LoginAdmin() {
 
@@ -70,12 +71,16 @@ export default function LoginAdmin() {
                             alignItems: 'center',
                         }}
                     >
-
-                        <Typography component="h1" variant="h5">
+                        <StyledTitle component="h1" variant="h5" sx={{ mb: "60px" }}>
                             Вход в систему
-                        </Typography>
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                        </StyledTitle>
+                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{
+                            mt: 1, display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}>
                             <TextField
+                                variant='outlined'
                                 margin="normal"
                                 required
                                 fullWidth
@@ -86,8 +91,21 @@ export default function LoginAdmin() {
                                 autoFocus
                                 error={!!emailError}
                                 helperText={emailError ? emailError : ''}
+                                sx={{
+                                    width: "530px",
+                                    height: "48px",
+                                    input: {
+                                        background: "#E6E6E6"
+                                    },
+                                    fieldset: {
+                                        borderRadius: "12px",
+                                    },
+                                    "& fieldset": { border: 'none' },
+                                    mb: "30px"
+                                }}
                             />
                             <TextField
+                                variant='outlined'
                                 margin="normal"
                                 required
                                 fullWidth
@@ -98,23 +116,40 @@ export default function LoginAdmin() {
                                 autoComplete="current-password"
                                 error={!!passwordError}
                                 helperText={passwordError ? passwordError : ''}
+                                sx={{
+                                    width: "530px",
+                                    height: "48px",
+                                    input: {
+                                        background: "#E6E6E6"
+                                    },
+                                    fieldset: {
+                                        borderRadius: "12px",
+                                    },
+                                    "& fieldset": { border: 'none' },
+                                    mt: "10px",
+                                    mb: "30px"
+                                }}
                             />
-                            {signError &&
-                                <Typography variant="subtitle1" color={theme.palette.error.main} sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center'
-                                }}>
-                                    {signError}
-                                </Typography>}
-                            <Button
+
+                            <Typography variant="subtitle1" color={theme.palette.error.main} sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center'
+                            }}>
+                                {signError && "Неверный логин и/или пароль"}
+                            </Typography>
+                            <StyledButton
                                 type="submit"
-                                fullWidth
+                                // fullWidth
                                 variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
+                                sx={{
+                                    mt: "100px",
+                                    width: "139px",
+                                    height: "49px"
+                                }}
                             >
                                 Войти
-                            </Button>
+                            </StyledButton>
                         </Box>
                     </Box>
                 </Container>

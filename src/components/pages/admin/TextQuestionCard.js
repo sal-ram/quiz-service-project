@@ -7,7 +7,7 @@ import { Box } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function QuestionCard({ question, handleDelete }) {
+export default function TextQuestionCard({ question }) {
 
     const typeLabels = {
         "open": "текст",
@@ -15,30 +15,19 @@ export default function QuestionCard({ question, handleDelete }) {
         "multiple": "с вариантами ответа"
     };
 
-    let [isSelected, setSelected] = useState(true);
-
-    const handleChange = () => {
-        setSelected(!isSelected);
-    }
-
-    const handleDeleteModal = () => {
-        setOpenDelete(true);
-    }
-
-    const handleEdit = () => {
-        console.log("edit" + question.id);
-        // editQuestion();
-    }
+    // let [isSelected, setSelected] = useState(true);
 
 
 
-    const [openDelete, setOpenDelete] = useState(false);
+
+
+    const [openCheck, setOpenCheck] = useState(false);
 
     return (
         <>
             <Dialog
-                open={openDelete}
-                onClose={() => setOpenDelete(false)}
+                open={openCheck}
+                onClose={() => setOpenCheck(false)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -51,10 +40,8 @@ export default function QuestionCard({ question, handleDelete }) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => { handleDelete(question.id); setOpenDelete(false) }} autoFocus>
-                        да
-                    </Button>
-                    <Button onClick={() => setOpenDelete(false)}>нет</Button>
+
+                    <Button onClick={() => setOpenCheck(false)}>нет</Button>
                 </DialogActions>
             </Dialog>
             <Card
@@ -77,13 +64,7 @@ export default function QuestionCard({ question, handleDelete }) {
                     >
                         {question.text}
                     </Typography>
-                    <Checkbox
-                        checked={isSelected}
-                        onChange={handleChange}
-                        style={{
-                            color: "black",
-                        }}
-                    />
+
 
                 </CardContent>
                 {/* <CssBaseline /> */}
@@ -100,22 +81,7 @@ export default function QuestionCard({ question, handleDelete }) {
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
                         <Chip label={typeLabels[question.type]} sx={{ height: "24px", fontSize: "12px", ml: "6px" }} />
-                        <IconButton onClick={handleEdit}
-                            style={{ padding: 1 }}
-                        >
-                            <EditIcon style={{
-                                color: "black",
-                                fontSize: "24px",
-                            }} />
-                        </IconButton>
-                        <IconButton onClick={handleDeleteModal}
-                            style={{ padding: 1 }}
-                            sx={{ marginRight: "16px", }}
-                        >
-                            <DeleteIcon style={{
-                                color: "black",
-                            }} />
-                        </IconButton>
+
                     </Box>
                 </Toolbar>
             </Card>

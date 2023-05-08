@@ -52,8 +52,8 @@ export default function Header() {
                                     mr: 2,
                                     display: { xs: 'none', md: 'flex' },
                                     fontFamily: 'Noto Sans',
-                                    fontWeight: 700,
-                                    letterSpacing: '.3rem',
+                                    fontWeight: "900",
+                                    fontSize: "44px",
                                     color: '#0F2D69',
                                     textDecoration: 'none',
                                 }}
@@ -67,9 +67,14 @@ export default function Header() {
                         <Tooltip>
                             <Button
                                 onClick={logOut}
+                                sx={{
+                                    color: "#6C6C6C",
+                                    fontWeight: "700",
+                                    fontSize: "18px"
+                                }}
                             >
                                 Выход
-                                <LogoutIcon />
+                                <LogoutIcon sx={{ marginLeft: "5px" }} />
                             </Button>
 
                         </Tooltip>
