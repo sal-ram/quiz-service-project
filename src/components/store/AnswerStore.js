@@ -13,7 +13,6 @@ class AnwerStore extends BaseStore {
         return null;
       }
       const docSnapshot = querySnapshot.docs[0];
-      console.log(teamId);
       return this._convertDocToAnswer(docSnapshot);
   }
 
@@ -42,9 +41,9 @@ class AnwerStore extends BaseStore {
     const answerData = answerDoc.data();
     return {
       id: answerDoc.id,
-      questionId: answerData.order,
-      teamId: answerData.text,
-      text: answerData.type
+      questionId: answerData.questionId,
+      teamId: answerData.teamId,
+      text: answerData.text
     };
   }
 }

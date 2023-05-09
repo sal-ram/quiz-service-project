@@ -49,6 +49,7 @@ function TeamContest() {
 
     const handleTimerEnd = () => {
         localStorage.removeItem(`endTime-${teamId}`);
+        navigate(`/team/waiting/${quizCode}/${teamId}`);
     };
 
     useEffect(() => {
@@ -110,30 +111,34 @@ function TeamContest() {
         }
     };
 
-    const handleSubmitAnswer = (e) => {
+    const handleSubmitAnswer = async(e) => {
         e.preventDefault();
         let isCorrect = false;
         console.log(selectedOptions);
         console.log(currentQuestion.correctAnswer);
-        localStorage.setItem(`answer-${teamId}-${currentQuestionIndex}`, JSON.stringify(selectedOptions));
+        let temp;
         if (currentQuestion.type === 'open') {
-            addAnswer(teamId, currentQuestion.id, selectedOptions[0]);
+            temp = await addAnswer(teamId, currentQuestion.id, selectedOptions[0]);
         } else if (currentQuestion.type === 'one') {
             isCorrect = selectedOptions == currentQuestion.correctAnswer;
         } else {
             isCorrect = JSON.stringify(selectedOptions) === JSON.stringify(currentQuestion.correctAnswer);
         }
-        if (!isCorrect && !currentQuestion.type === 'open') {
+        console.log(currentQuestion.type, isCorrect);
+        if (currentQuestion.type !== 'open') {
+            if (!isCorrect) {
             // alert(`Неправильно. Правильный ответ: ${currentQuestion.correctAnswer}`);
-            addAnswer(teamId, currentQuestion.id, "incorrect");
-        } else {
+            temp = await addAnswer(teamId, currentQuestion.id, "incorrect");
+            } else {
             // alert("Правильно!");
-            addAnswer(teamId, currentQuestion.id, "correct");
+            temp = await addAnswer(teamId, currentQuestion.id, "correct");
             console.log(currentQuestion.points);
             addPoints(teamId, currentQuestion.points);
+            }
         }
+        localStorage.setItem(`answer-${teamId}-${currentQuestionIndex}`, JSON.stringify(temp));
         setIsSubmitted(true);
-        console.log(selectedOptions);
+        console.log(temp);
     };
 
     const handleOptionChange = (e) => {
@@ -227,7 +232,7 @@ function TeamContest() {
                                                     control={<Checkbox
                                                         value={answer}
                                                         onChange={handleOptionChange}
-                                                        checked={selectedOptions && selectedOptions.includes(answer)}
+                                                        checked={selectedOptions[0] && selectedOptions.includes(answer)}
                                                         disabled={isSubmitted}
                                                     />}
                                                     label={answer}

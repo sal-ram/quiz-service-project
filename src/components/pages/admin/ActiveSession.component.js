@@ -7,17 +7,17 @@ import { StyledTitle } from './style/Title.styled';
 import getAllTeams from '../../use_cases/GetAllTeams';
 import Loader from '../../common/Loader.component';
 import getQuiz from '../../use_cases/GetQuiz';
-import getAllAnswers from '../../use_cases/GetAllAnswers';
-import getAnswer from '../../use_cases/GetAnswer';
 import { collection, onSnapshot } from "firebase/firestore";
 import { firestore } from "../../../firebase";
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import { StyledTable } from './style/Table.styled';
 
 const SECONDS_TO_QUESTION = 1090;
 export default function ActiveSession() {
 
     const { quizId } = useParams();
     const [questions, setQuestions] = useState([]);
-    const [teams, setTeams] = useState([]);
     const [teamList, setTeamList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);    
     let navigate = useNavigate();
@@ -27,15 +27,26 @@ export default function ActiveSession() {
     const [answers, setAnswers] = useState([]);
 
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(firestore, "answers"), (snapshot) => {
-            const newAnswer= snapshot.docs.map((doc) => ({
+        const unsubscribeAnswers = onSnapshot(collection(firestore, "answers"), (snapshot) => {
+            const newAnswers = snapshot.docs.map((doc) => ({
               id: doc.id,
               ...doc.data(),
             }));
-            setAnswers(newAnswer);
-            console.log(newAnswer);
-        });
-        return () => unsubscribe();
+            setAnswers(newAnswers);
+          });
+          
+          const unsubscribeTeams = onSnapshot(collection(firestore, "teams"), (snapshot) => {
+            const newTeams = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setTeamList(newTeams);
+          });
+          
+          return () => {
+            unsubscribeAnswers();
+            unsubscribeTeams();
+          };
     }, []);
 
     const handleFinish = () => {
@@ -113,6 +124,20 @@ export default function ActiveSession() {
         return `${minutes}:${paddedSeconds}`;
     }
 
+    const getAnswer = (a, b) => {
+        const answer = JSON.parse(localStorage.getItem(`answer-${a}-${b}`));
+        console.log(answer);
+        if (answer !== null) {
+            if (answer.text === "correct") {
+                return <CheckIcon />;
+            } else if (answer.text === "incorrect") {
+                return <CloseIcon />;
+            }
+        } else  {
+            return null;
+        }
+    }
+
     return (
         <Container>
             <Toolbar
@@ -141,33 +166,34 @@ export default function ActiveSession() {
                 Обзор сессии:
             </StyledTitle>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <StyledTable sx={{ minWidth: 650, paddingTop: "30%" }} aria-label="simple table" className="styled-table">
                     <TableHead>
                         <TableRow>
                             <TableCell><h3>Команда</h3></TableCell>
                             {questions.map((q, index) => (
-                                <TableCell key={index}><h3>{index + 1}</h3></TableCell>
+                                <TableCell key={index} className="question"><h3>{index + 1}</h3></TableCell>
                             ))}
-                            <TableCell><h3>Баллы</h3></TableCell>
+                            <TableCell className="points"><h3>Баллы</h3></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {teamList.map((t) => (
-                            <TableRow key={t.id}>
-                                <TableCell component="th" scope="row">
-                                    {t.name}
+                        {teamList.map((t, index) => (
+                            <TableRow key={t.id} className={index % 2 === 0 ? "grey-row" : ""}>
+                                <TableCell component="td" scope="row">
+                                    <p>{t.name}</p>
                                 </TableCell>
                                 {questions.map((q, index) => (
-                                    <TableCell key={index}>
-                                        {getAnswer(q.id, t.id)?.text === 'correct' ? 1 : '-'}
+                                    <TableCell key={index} className="question">
+                                        {getAnswer(t.id, index)}
                                     </TableCell>
                                 ))}
-                                <TableCell>{t.points}</TableCell>
+                                <TableCell className="points"><p>{t.points}</p></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
-                </Table>
+                </StyledTable>
             </TableContainer>
         </Container>
+
     )
 }
