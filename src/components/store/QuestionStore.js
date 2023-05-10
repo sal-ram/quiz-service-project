@@ -15,7 +15,7 @@ class QuestionStore extends BaseStore {
     });
     const questionSnapshot = await getDoc(questionRef);
     console.log(questionSnapshot);
-    return this._convertDocToAnswer(questionSnapshot);
+    return questionSnapshot;
   }
   
   async get(questionId) {
@@ -34,6 +34,14 @@ class QuestionStore extends BaseStore {
 
   async delete(questionId) {
     return await deleteDoc(doc(this.firestore, "questions", questionId));
+  }
+
+  async update(questionId, newQuestion) {
+    const qRef = doc(collection(this.firestore, "questions"), questionId);
+    let qSnapshot = await getDoc(qRef);
+    const updatedQSnapshot = await updateDoc(qRef, { ...newQuestion });
+    qSnapshot = await getDoc(qRef);
+    return this._convertDocToQuestion(qSnapshot);
   }
 
   _convertDocToQuestion(questionDoc) {

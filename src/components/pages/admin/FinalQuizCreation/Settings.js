@@ -3,8 +3,9 @@ import { Box, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { StyledTitle } from "../style/Title.styled";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import StarIcon from '@mui/icons-material/Star';
+import { Options } from './Options';
 
-export const Settings = ({questions}) => {
+export const Settings = ({ questions }) => {
     return (
         <>
             <StyledTitle component="h1" variant="h5" sx={{ fontSize: "36px", mb: 2 }}>
@@ -60,33 +61,13 @@ export const Settings = ({questions}) => {
                 Настройки:
             </StyledTitle>
             <FormGroup>
-                <FormControlLabel disabled control={<Checkbox style={{
-                    color: "black",
-                }} defaultChecked />}
-                    label={<Box sx={{
-                        fontFamily: 'Noto Sans',
-                        fontStyle: "normal",
-                        fontWeight: "700",
-                        fontSize: "18px",
-                    }}>Перелистывание вопросов</Box>} />
-                <FormControlLabel disabled control={<Checkbox style={{
-                    color: "black",
-                }} />}
-                    label={<Box sx={{
-                        fontFamily: 'Noto Sans',
-                        fontStyle: "normal",
-                        fontWeight: "700",
-                        fontSize: "18px",
-                    }}>Ограничение по времени</Box>} />
-                <FormControlLabel disabled control={<Checkbox style={{
-                    color: "black",
-                }} />}
-                    label={<Box sx={{
-                        fontFamily: 'Noto Sans',
-                        fontStyle: "normal",
-                        fontWeight: "700",
-                        fontSize: "18px",
-                    }}>Время начала</Box>} />
+                {/* <Options/> */}
+                <Box sx={{
+                    fontFamily: 'Noto Sans',
+                    fontStyle: "normal",
+                    fontWeight: "700",
+                    fontSize: "18px",
+                }}>Ограничение по времени(мин)</Box>
             </FormGroup>
         </>
     );

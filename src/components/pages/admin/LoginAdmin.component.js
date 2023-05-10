@@ -140,7 +140,6 @@ export default function LoginAdmin() {
                             </Typography>
                             <StyledButton
                                 type="submit"
-                                // fullWidth
                                 variant="contained"
                                 sx={{
                                     mt: "100px",

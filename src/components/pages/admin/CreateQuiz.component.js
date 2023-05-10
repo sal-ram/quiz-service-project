@@ -5,11 +5,10 @@ import getAllQuestions from '../../use_cases/GetAllQuestions';
 import { Grid, Toolbar } from '@mui/material';
 import { Box, Container } from '@mui/system';
 import { useNavigate } from 'react-router';
-import { CreateQuestionModal, QuestionModal } from './CreateModal/CreateQuestionModal.component';
+import { QuestionModal } from './Modal/QuestionModal.component';
 import { StyledTitle } from './style/Title.styled';
 import { StyledButton } from './style/Button.styled';
 import { deleteQuestion } from '../../use_cases/DeleteQuestion';
-import { EditQuestionModal } from './EditModal/EditQuestionModal';
 import { createQuiz } from '../../use_cases/CreateQuiz';
 
 
@@ -26,31 +25,51 @@ export default function CreateQuiz() {
     const [questions, setQuestions] = useState([]);
     const [createModal, setCreateModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
+    let [step, setStep] = useState(1);
+    const [editQuestion, setEditQuestion] = useState("");
+    const [selectedQuestions, setSelected] = useState([]);
+
+    const prevStep = () => {
+        if (step > 1) {
+            setStep(step - 1);
+        }
+    }
+
+    const nextStep = () => {
+        if (step < 3) {
+            setStep(step + 1);
+        }
+    }
+
 
     const routeChange = async () => {
-        console.log(questions);
-        const quiz = await createQuiz(questions);
+        const quizQ = questions.filter((q) => selectedQuestions.includes(q.id));
+        console.log("---", quizQ);
+        const quiz = await createQuiz(quizQ);
         let path = `/admin/create-quiz-final/${quiz.id}`;
         navigate(path);
     }
 
-    const addQuestion = () => {
-        console.log("modal");
+    const handleCreateQuestion = () => {
+        setStep(1);
         setCreateModal(true);
     }
 
-    const closeCreateModal = () => { 
-        console.log("close");
+    const closeCreateModal = () => {
         setCreateModal(false);
     }
-
+    const handleEditQuestion = (question) => {
+        setEditModal(true);
+        setStep(2);
+        setEditQuestion(question);
+    }
     const closeEditModal = () => {
         console.log("close");
         setEditModal(false);
+        setEditQuestion("");
     }
 
-    const handleDeleteQuestion = (questionId) => {
-        deleteQuestion(questionId);
+    const fetchQuestions = () => {
         setLoading(true);
         getAllQuestions()
             .then((result) => {
@@ -61,9 +80,21 @@ export default function CreateQuiz() {
             });
     }
 
-    const handleEditQuestion = (questionId) => {
-        setEditModal(true);
+    const handleDeleteQuestion = (questionId) => {
+        deleteQuestion(questionId);
+        fetchQuestions();
     }
+
+    const handleSelect = (questionId, state) => {
+        console.log(questionId, state);
+        if (state) {
+            setSelected((selectedQuestions) => [...selectedQuestions, questionId])
+        } else {
+            setSelected((selectedQuestions) => [...selectedQuestions.filter(e => e !== questionId)])
+        }
+    }
+
+
 
     useEffect(() => {
         setLoading(true);
@@ -74,9 +105,6 @@ export default function CreateQuiz() {
             .then(() => {
                 setLoading(false);
             });
-        // console.log(getAllQuestions())
-        // setQuestions(questionsList);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     if (loading) {
@@ -118,7 +146,10 @@ export default function CreateQuiz() {
             >
                 {questions.map(question =>
                     <Grid item key={question.id} >
-                        <QuestionCard question={question} handleDelete={handleDeleteQuestion} handleEdit={handleEditQuestion} />
+                        <QuestionCard question={question} handleDelete={handleDeleteQuestion}
+                            handleEdit={handleEditQuestion} handleSelect={handleSelect}
+                            selected={selectedQuestions.some(q => q === question.id)}
+                        />
                     </Grid>
                 )}
             </Grid>
@@ -128,14 +159,18 @@ export default function CreateQuiz() {
                 alignItems: 'center',
                 mt: "72px",
             }}>
-                <StyledButton variant="contained" onClick={addQuestion} sx={{
+                <StyledButton variant="contained" onClick={handleCreateQuestion} sx={{
                     width: "286px",
                     height: "57px"
                 }} >добавить вопрос</StyledButton>
             </Box>
 
-            {createModal && <CreateQuestionModal isOpen={createModal} closeModal={closeCreateModal} />}
-            {editModal && <EditQuestionModal isOpen={editModal} closeModal={closeEditModal} />}
+            <QuestionModal step={step} prevStep={prevStep} nextStep={nextStep} isOpen={createModal} closeModal={closeCreateModal}
+                fetchQuestions={fetchQuestions}
+            />
+            <QuestionModal step={step} prevStep={prevStep} nextStep={nextStep} isOpen={editModal} closeModal={closeEditModal}
+                fetchQuestions={fetchQuestions} questionInfo={editQuestion}
+            />
         </Container>
     )
 }

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
 import Loader from '../../../common/Loader.component';
 import { Box, Container } from '@mui/system';
-import { Checkbox, FormControlLabel, FormGroup, Grid, Toolbar, Typography } from '@mui/material';
+import { Card, CardContent, Checkbox, Chip, FormControlLabel, FormGroup, Grid, Toolbar, Typography } from '@mui/material';
 import { StyledButton } from '../style/Button.styled';
 import { StyledTitle } from '../style/Title.styled';
 import QuestionCard from '../QuestionCard.component';
@@ -14,6 +14,12 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { firestore } from "../../../../firebase";
 
 export default function FinalQuizCreation() {
+
+    const typeLabels = {
+        "open": "текст",
+        "one": "с одним ответом",
+        "multiple": "с вариантами ответа"
+    };
 
     let navigate = useNavigate();
     const routeChange = () => {
@@ -34,22 +40,25 @@ export default function FinalQuizCreation() {
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(firestore, "teams"), (snapshot) => {
             const newTeams = snapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
+                id: doc.id,
+                ...doc.data(),
             }));
             setTeams(newTeams);
         });
         return () => unsubscribe();
     }, []);
-    
+
     useEffect(() => {
         setLoading(true);
         if (quizId) {
             getQuiz(quizId)
-              .then(quiz => {setQuiz(quiz); 
-                const questionList = Object.keys(quiz.questions).map(key => quiz.questions[key]);
-                setQuestions(questionList)})
-              .catch(error => console.error(error));
+                .then(quiz => {
+                    setQuiz(quiz);
+                    const questionList = Object.keys(quiz.questions).map(key => quiz.questions[key]);
+                    setQuestions(questionList)
+                }
+                )
+                .catch(error => console.error(error));
         }
         setLoading(false);
     }, []);
@@ -69,13 +78,16 @@ export default function FinalQuizCreation() {
         <Container>
             <Toolbar
                 position="sticky"
-                sx={{ mt: 1 }}
+                sx={{ mt: 3 }}
             >
                 <Grid container spacing={2}>
                     <Box sx={{
                         display: "flex",
                         flexGrow: 1
                     }}>
+                        <StyledTitle component="h1" variant="h5" sx={{ fontSize: "36px", mb: 2 }}>
+                            код игры - {quiz.quizCode}
+                        </StyledTitle>
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
                         <StyledButton variant="contained" sx={{ marginRight: "24px", width: "155px", }} onClick={routeChange}>назад</StyledButton>
@@ -97,9 +109,53 @@ export default function FinalQuizCreation() {
                     >
                         {questions.map(question =>
                             <Grid item key={question.id} sx={{ mr: "5px", }} >
-                                <QuestionCard question={question}
-                                // handleDelete={handleDeleteQuestion}
-                                />
+                                <Card
+                                    sx={{
+                                        width: "360px",
+                                        backgroundColor: "#E6E6E6"
+                                    }}
+                                >
+                                    <CardContent sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                    }}>
+                                        <Typography gutterBottom variant="h5" component="div"
+                                            sx={{
+                                                fontWeight: "600",
+                                                fontSize: "18px",
+                                                lineHeight: "25px",
+                                            }}
+                                        >
+                                            {question.text}
+                                        </Typography>
+                                        {/* <Checkbox
+                                            checked={isSelected}
+                                            onChange={handleChange}
+                                            style={{
+                                                color: "black",
+                                            }}
+                                        /> */}
+
+                                    </CardContent>
+                                    {/* <CssBaseline /> */}
+                                    <Toolbar
+                                        position="sticky"
+                                        style={{ padding: 0 }}
+                                    >
+                                        <Box sx={{
+                                            display: "flex",
+                                            flexGrow: 1,
+                                            marginLeft: "16px",
+                                        }}>
+                                            <Chip label={question.tag} sx={{ height: "24px", fontSize: "12px" }} />
+                                        </Box>
+                                        <Box sx={{ flexGrow: 0 }}>
+                                            <Chip label={typeLabels[question.type]} sx={{ height: "24px", fontSize: "12px", ml: "6px" }} />
+
+                                        </Box>
+                                    </Toolbar>
+                                </Card>
                             </Grid>
                         )}
                     </Grid>

@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Button, Checkbox, Chip, CssBaseline, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Toolbar } from '@mui/material';
+import { Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Toolbar } from '@mui/material';
 import { Box } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function QuestionCard({ question, handleDelete }) {
+export default function QuestionCard({ question, handleDelete, handleEdit, handleSelect, selected }) {
 
     const typeLabels = {
         "open": "текст",
@@ -15,19 +15,19 @@ export default function QuestionCard({ question, handleDelete }) {
         "multiple": "с вариантами ответа"
     };
 
-    let [isSelected, setSelected] = useState(true);
+    // let [isSelected, setSelected] = useState(true);
 
     const handleChange = () => {
-        setSelected(!isSelected);
+        handleSelect(question.id, !selected);
     }
 
     const handleDeleteModal = () => {
         setOpenDelete(true);
     }
 
-    const handleEdit = () => {
+    const handleClick = () => {
         console.log("edit" + question.id);
-        // editQuestion();
+        handleEdit(question);
     }
 
 
@@ -78,7 +78,7 @@ export default function QuestionCard({ question, handleDelete }) {
                         {question.text}
                     </Typography>
                     <Checkbox
-                        checked={isSelected}
+                        checked={!!selected}
                         onChange={handleChange}
                         style={{
                             color: "black",
@@ -86,7 +86,6 @@ export default function QuestionCard({ question, handleDelete }) {
                     />
 
                 </CardContent>
-                {/* <CssBaseline /> */}
                 <Toolbar
                     position="sticky"
                     style={{ padding: 0 }}
@@ -100,7 +99,7 @@ export default function QuestionCard({ question, handleDelete }) {
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
                         <Chip label={typeLabels[question.type]} sx={{ height: "24px", fontSize: "12px", ml: "6px" }} />
-                        <IconButton onClick={handleEdit}
+                        <IconButton onClick={handleClick}
                             style={{ padding: 1 }}
                         >
                             <EditIcon style={{
@@ -119,6 +118,7 @@ export default function QuestionCard({ question, handleDelete }) {
                     </Box>
                 </Toolbar>
             </Card>
+            
         </>
     );
 }
