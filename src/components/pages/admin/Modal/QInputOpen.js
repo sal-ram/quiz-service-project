@@ -14,7 +14,9 @@ export const QInputOpen = ({ handleChange, values }) => {
                 name="correctAnswer"
                 required
                 defaultValue={values.correctAnswer}
-            
+                multiline
+                rows={4}
+                sx={{ width: "326px", }}
             />
         </>
     )

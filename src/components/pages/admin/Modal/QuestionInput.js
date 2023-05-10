@@ -85,30 +85,50 @@ export const QuestionInput = ({ nextStep, prevStep, handleChange, values, closeM
                         label="Текст вопроса"
                         name="text"
                         defaultValue={values.text}
+                        sx={{ width: "326px", }}
                     />
 
                     {renderSwitch(values.type)}
-                    <TextField label="Кол-во баллов:"
+                    <Box sx={{display: "flex", alignItems: "center",}}>
+                        <div>Кол-во баллов:</div>
+                        <TextField label=""
                         id="points"
                         name="points"
                         required
                         defaultValue={values.points}
+                        sx={{ width: "80px", mt: 2, mb: 1 }}
                     />
+                    </Box>
+                    
                     {values.text ?
                         <StyledButton type="submit"
-                        // onClick={() => {
-                        // closeModal();
-                        // handleEditQuestion();
-                        // }}
+                            // onClick={() => {
+                            // closeModal();
+                            // handleEditQuestion();
+                            // }}
+                            sx={{
+                                width: "376px",
+                                height: "43px"
+                            }}
                         >сохранить изменения</StyledButton> :
                         <><StyledButton type="submit"
                             onClick={() => {
                                 nextStep();
                             }}
+                            sx={{
+                                width: "376px",
+                                height: "43px"
+                            }}
                         >добавить вопрос</StyledButton>
                             <StyledButton onClick={() => {
                                 prevStep();
-                            }}>вернуться к выбору</StyledButton>
+                            }}
+                                sx={{
+                                    mt: 2,
+                                    width: "376px",
+                                    height: "43px"
+                                }}
+                            >вернуться к выбору</StyledButton>
                         </>
                     }
 
