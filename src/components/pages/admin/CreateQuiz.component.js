@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import QuestionCard from './QuestionCard.component';
 import Loader from '../../common/Loader.component';
 import getAllQuestions from '../../use_cases/GetAllQuestions';
-import { Grid, Toolbar } from '@mui/material';
+import { Chip, Grid, Toolbar } from '@mui/material';
 import { Box, Container } from '@mui/system';
 import { useNavigate } from 'react-router';
 import { QuestionModal } from './Modal/QuestionModal.component';
@@ -10,6 +10,8 @@ import { StyledTitle } from './style/Title.styled';
 import { StyledButton } from './style/Button.styled';
 import { deleteQuestion } from '../../use_cases/DeleteQuestion';
 import { createQuiz } from '../../use_cases/CreateQuiz';
+import { CreateQuestionModal } from './QuestionModal/CreateQuestionModal';
+import { EditQuestionModal } from './QuestionModal/EditQuestionModal';
 
 
 export default function CreateQuiz() {
@@ -25,22 +27,25 @@ export default function CreateQuiz() {
     const [questions, setQuestions] = useState([]);
     const [createModal, setCreateModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
-    let [step, setStep] = useState(1);
+
+    let [createStep, setCreateStep] = useState(1);
+
     const [editQuestion, setEditQuestion] = useState("");
     const [selectedQuestions, setSelected] = useState([]);
 
+    const tags = ["физика", "химия", "игры", "программирован"];
+
     const prevStep = () => {
-        if (step > 1) {
-            setStep(step - 1);
+        if (createStep > 1) {
+            setCreateStep(createStep - 1);
         }
     }
 
     const nextStep = () => {
-        if (step < 3) {
-            setStep(step + 1);
+        if (createStep < 3) {
+            setCreateStep(createStep + 1);
         }
     }
-
 
     const routeChange = async () => {
         const quizQ = questions.filter((q) => selectedQuestions.includes(q.id));
@@ -51,7 +56,7 @@ export default function CreateQuiz() {
     }
 
     const handleCreateQuestion = () => {
-        setStep(1);
+        setCreateStep(1);
         setCreateModal(true);
     }
 
@@ -60,7 +65,6 @@ export default function CreateQuiz() {
     }
     const handleEditQuestion = (question) => {
         setEditModal(true);
-        setStep(2);
         setEditQuestion(question);
     }
     const closeEditModal = () => {
@@ -92,6 +96,10 @@ export default function CreateQuiz() {
         } else {
             setSelected((selectedQuestions) => [...selectedQuestions.filter(e => e !== questionId)])
         }
+    }
+
+    const handleTagClick = (tag) => {
+
     }
 
 
@@ -140,6 +148,11 @@ export default function CreateQuiz() {
                 </Box>
 
             </Toolbar>
+            {/* <Toolbar>
+                {tags.map((tag) => (
+                    <Chip label={tag} variant="outlined" onClick={handleTagClick} />
+                ))}
+            </Toolbar> */}
             <Grid container
                 spacing={{ xs: 2, md: 3 }}
                 style={{ maxHeight: '355px', overflowY: 'scroll' }}
@@ -165,11 +178,20 @@ export default function CreateQuiz() {
                 }} >добавить вопрос</StyledButton>
             </Box>
 
-            <QuestionModal step={step} prevStep={prevStep} nextStep={nextStep} isOpen={createModal} closeModal={closeCreateModal}
+            {/* <QuestionModal step={step} prevStep={prevStep} nextStep={nextStep} isOpen={createModal} closeModal={closeCreateModal}
                 fetchQuestions={fetchQuestions}
             />
             <QuestionModal step={step} prevStep={prevStep} nextStep={nextStep} isOpen={editModal} closeModal={closeEditModal}
                 fetchQuestions={fetchQuestions} questionInfo={editQuestion}
+            /> */}
+            <CreateQuestionModal step={createStep} nextStep={nextStep} prevStep={prevStep}
+                isOpen={createModal} closeModal={closeCreateModal}
+                fetchQuestions={fetchQuestions}
+            />
+            <EditQuestionModal 
+                isOpen={editModal} closeModal={closeEditModal}
+                fetchQuestions={fetchQuestions}
+                questionInfo={editQuestion}
             />
         </Container>
     )

@@ -3,9 +3,9 @@ import React from 'react';
 
 export const QInputOpen = ({ handleChange, values }) => {
 
-    const handleForm = (newValue) => {
-        handleChange("correctAnswer", newValue.target.value)
-    }
+    // const handleForm = (newValue) => {
+    //     handleChange("correctAnswer", newValue.target.value)
+    // }
 
     return (
         <>
@@ -13,10 +13,11 @@ export const QInputOpen = ({ handleChange, values }) => {
                 id="correctAnswer"
                 name="correctAnswer"
                 required
-                defaultValue={values.correctAnswer}
+                defaultValue={values.type === "open" ? values.correctAnswer : ""}
                 multiline
                 rows={4}
                 sx={{ width: "326px", }}
+                onChange={(e) => handleChange("correctAnswer", e.target.value)}
             />
         </>
     )

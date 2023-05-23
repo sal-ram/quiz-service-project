@@ -6,12 +6,12 @@ import { Box } from '@mui/system';
 
 export const ChoseType = ({ nextStep, prevStep, handleChange, values }) => {
 
-    useEffect(() => {
-        console.log(values.type);
-        if (values.text) {
-            nextStep();
-        }
-    }, []);
+    // useEffect(() => {
+    //     console.log(values.type);
+    //     if (values.text) {
+    //         nextStep();
+    //     }
+    // }, []);
 
     return (
         <>
@@ -22,7 +22,7 @@ export const ChoseType = ({ nextStep, prevStep, handleChange, values }) => {
                 }}>Выберите тип вопроса</StyledTitle>
             </DialogTitle>
             <DialogContent>
-                <DialogContentText id="alert-dialog-description">
+                {/* <DialogContentText id="alert-dialog-description"> */}
                     <Box component="" sx={{
                         mt: 3, display: 'flex',
                         flexDirection: 'column',
@@ -43,20 +43,21 @@ export const ChoseType = ({ nextStep, prevStep, handleChange, values }) => {
                             mt: 1, mb: 2, backgroundColor: "#2C5198",
                         }}
                             onClick={() => {
-                            handleChange("type", "multiple");
-                            nextStep();
-                        }}>вопрос с несколькими ответами</StyledButton>
+                                handleChange("type", "multiple");
+                                nextStep();
+                            }}>вопрос с несколькими ответами</StyledButton>
                         <StyledButton sx={{
                             width: "376px",
                             height: "57px",
                             mt: 1, mb: 2,
                         }}
                             onClick={() => {
-                            handleChange("type", "open");
-                            nextStep();
+                                handleChange("type", "open");
+                                console.log("click type");
+                                nextStep();
                             }}>открытый вопрос</StyledButton>
                     </Box>
-                </DialogContentText>
+                {/* </DialogContentText> */}
             </DialogContent>
         </>
     )

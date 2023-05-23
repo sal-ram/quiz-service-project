@@ -70,8 +70,10 @@ export const QuestionInput = ({ nextStep, prevStep, handleChange, values, closeM
     return (
 
         <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-                <Box component="form" onSubmit={values.text ? handleSubmitEdit : handleSubmitCreate} noValidate sx={{
+            
+                <Box component="form"
+                    // onSubmit={values.text ? handleSubmitEdit : handleSubmitCreate}
+                    noValidate sx={{
                     mt: 1, display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -84,8 +86,9 @@ export const QuestionInput = ({ nextStep, prevStep, handleChange, values, closeM
                         id="text"
                         label="Текст вопроса"
                         name="text"
-                        defaultValue={values.text}
+                        defaultValue={values?values.text:""}
                         sx={{ width: "326px", }}
+                        onChange={(e) => handleChange("text", e.target.value)}
                     />
 
                     {renderSwitch(values.type)}
@@ -95,12 +98,13 @@ export const QuestionInput = ({ nextStep, prevStep, handleChange, values, closeM
                         id="points"
                         name="points"
                         required
-                        defaultValue={values.points}
-                        sx={{ width: "80px", mt: 2, mb: 1 }}
+                        defaultValue={values?values.points:""}
+                            sx={{ width: "80px", mt: 2, mb: 1 }}
+                            onChange={(e) => handleChange("points", e.target.value)}
                     />
                     </Box>
                     
-                    {values.text ?
+                    {/* {values.text ?
                         <StyledButton type="submit"
                             // onClick={() => {
                             // closeModal();
@@ -110,7 +114,7 @@ export const QuestionInput = ({ nextStep, prevStep, handleChange, values, closeM
                                 width: "376px",
                                 height: "43px"
                             }}
-                        >сохранить изменения</StyledButton> :
+                        >сохранить изменения</StyledButton> : */}
                         <><StyledButton type="submit"
                             onClick={() => {
                                 nextStep();
@@ -130,10 +134,9 @@ export const QuestionInput = ({ nextStep, prevStep, handleChange, values, closeM
                                 }}
                             >вернуться к выбору</StyledButton>
                         </>
-                    }
+                    {/* } */}
 
                 </Box>
-            </DialogContentText>
         </DialogContent>
 
     )

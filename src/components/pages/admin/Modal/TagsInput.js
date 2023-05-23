@@ -23,21 +23,30 @@ export const TagsInput = ({ step, nextStep, prevStep, handleChange, values, clos
                 "Введите тэг"
             </DialogTitle>
             <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    <Box component="form" onSubmit={handleCreate} noValidate sx={{
-                        mt: 1, display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}>
-                        <TextField label="Тэг:" id="tag" name="tag" required />
-                        <StyledButton type="submit">добавить вопрос</StyledButton>
-                    
+                
+                    <Box component="form"
+                        // onSubmit={handleCreate}
+                        noValidate sx={{
+                            mt: 1, display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}>
+                        <TextField label="Тэг:" id="tag" name="tag" required
+                            onChange={(e) => handleChange("tag", e.target.value)}
+                        />
+                        <StyledButton 
+                            onClick={() => {
+                                createQuestion();
+                                closeModal();
+                            }}
+                        >добавить вопрос</StyledButton>
+
                     </Box>
 
                     <StyledButton onClick={() => {
                         prevStep();
                     }}>вернуться к вопросу</StyledButton>
-                </DialogContentText>
+               
             </DialogContent>
         </>
     )
